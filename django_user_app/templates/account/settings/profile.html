@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ user.username }} - Profil utilisateur{% endblock title %}
+
+{% block head %}
+{{ profile_form.media }}
+{% endblock head %}
+
+{% block content %}
+<div class="row">
+    {% include 'account/nav.html' %}
+    <div class="col">
+        <h2>Mon profil</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ profile_form|crispy }}
+            {% if user.profile.avatar %}
+            <p>
+                <img src="{{ user.profile.avatar.url }}" class="img-responsive rounded" style="width: 256px; max-width: 100%;">
+            </p>
+            {% endif %}
+            <input type="submit" value="Enregistrer" class="btn btn-primary">
+            <input type="reset" value="Annuler" class="btn btn-secondary">
+        </form>
+    </div>
+</div>
+{% endblock content %}

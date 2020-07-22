@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ user.username }} - Compte utilisateur{% endblock title %}
+
+{% block head %}
+{{ user_form.media }}
+{% endblock head %}
+
+{% block content %}
+<div class="row">
+    {% include 'account/nav.html' %}
+    <div class="col">
+        <h2>Mon compte utilisateur</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ user_form|crispy }}
+            <input type="submit" value="Enregistrer" class="btn btn-primary">
+            <input type="reset" value="Annuler" class="btn btn-secondary">
+        </form>
+        <h2>Supprimer mon compte utilisateur</h2>
+        <p>
+            Attention cette opération va supprimer toutes les données qui sont reliées à votre compte.
+            Cette action est aussi irreversible.
+        </p>
+        <a href="{% url 'account:delete' %}" class="btn btn-danger"
+            onclick="return confirm('Etes-vous sûrs de vouloir supprimer votre compte ?')">
+            Supprimer le compte
+        </a>
+    </div>
+</div>
+{% endblock content %}

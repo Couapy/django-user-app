@@ -1,0 +1,14 @@
+<div class="col col-12 col-md-3 mb-3">
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-secondary">
+            {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="height: 1.2em;" class="rounded mr-1">
+            {% endif %}
+            {{ user.username }}
+        </li>
+        <a href="{% url 'account:profile' %}" class="list-group-item{% if request.resolver_match.url_name == "profile" %} active{% endif %}">Profil</a>
+        <a href="{% url 'account:user' %}" class="list-group-item{% if request.resolver_match.url_name == "user" %} active{% endif %}">Utilisateur</a>
+        <a href="{% url 'account:password' %}" class="list-group-item{% if request.resolver_match.url_name == "password" %} active{% endif %}">Mot de passe</a>
+        <a href="{% url 'account:connections' %}" class="list-group-item{% if request.resolver_match.url_name == "connections" %} active{% endif %}">Connexions</a>
+    </ul>
+</div>

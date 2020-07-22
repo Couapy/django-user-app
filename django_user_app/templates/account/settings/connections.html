@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}{{ user.username }} - Connexions{% endblock title %}
+
+{% block head %}
+{{ profile_form.media }}
+{% endblock head %}
+
+{% block content %}
+{% if success %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Les modifications ont bien été enregistrées.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+<div class="row">
+    {% include 'account/nav.html' %}
+    <div class="col">
+        <h2>Connections à des comptes tiers</h2>
+
+        {% for provider in services %}
+        <h3>{{ provider.name }}</h3>
+        <div class="mb-3">
+            {% if provider.login %}
+            {% if provider.link and provider.username %}
+            <p>Connecté avec {{ provider.name }} en tant que <a href="{{ provider.link }}">{{ provider.username }}</a>.</p>
+            {% else %}
+            <p>Connecté avec {{ provider.name }}.</p>
+            {% endif %}
+            {% if can_disconnect %}
+            <form method="post" action="{% url 'social:disconnect' provider.provider %}?next={% url 'account:connections' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-secondary">Ne plus lier le compte avec {{ provider.name }}</button>
+            </form>
+            {% else %}
+            <button type="button" class="btn btn-sm btn-secondary" disabled>Ne plus lier le compte avec {{ provider.name }}</button>
+            <div class="alert alert-danger mt-3" role="alert">
+                Vous devez <a href="{% url 'account:password' %}">changer de mot de passe</a> avant de vous déconnecter de {{ provider.name }}
+            </div>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'social:begin' provider.provider %}?next={% url 'account:connections' %}">Lier le compte avec {{ provider.name }}</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

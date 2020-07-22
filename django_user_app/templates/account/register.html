@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Création d'un nouveau compte{% endblock title %}
+
+{% block content %}
+<h2>Création d'un compte</h2>
+<form method="post" method="POST">
+    {% csrf_token %}
+    {{ register_form|crispy }}
+    <input type="submit" value="Enregistrer" class="btn btn-primary">
+    <input type="reset" value="Annuler" class="btn btn-secondary">
+</form>
+<div class="mt-3">
+    <a href="{% url 'login' %}">Se connecter</a>
+</div>
+{% endblock %}
