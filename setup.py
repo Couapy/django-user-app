@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="django-user-app",
-    version="0.0.2",
+    version="0.0.4",
     author="Couapy",
     author_email="contact@marchand.cloud",
     description="A user app for Django3",
