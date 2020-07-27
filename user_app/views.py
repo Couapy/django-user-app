@@ -8,9 +8,36 @@ from social_django.models import UserSocialAuth
 
 from .forms import ProfileForm, UserForm
 
+providers = [
+    {
+        "provider": "google-oauth2",
+        "name": "Google",
+        "link": None,
+        "username": None,
+    },
+    {
+        "provider": "github",
+        "name": "Github",
+        "link": "https://github.com/{{ data.login }}",
+        "username": "{{ data.login }}",
+    },
+    {
+        "provider": "twitter",
+        "name": "Twitter",
+        "link": "https://twitter.com/{{ data.access_token.screen_name }}/",
+        "username": "@{{ data.access_token.screen_name }}",
+    },
+    {
+        "provider": "facebook",
+        "name": "Facebook",
+        "link": None,
+        "username": None,
+    },
+]
+
 
 def index(request):
-    return HttpResponseRedirect(reverse("account:profile"))
+    return HttpResponseRedirect(reverse("user_app:profile"))
 
 
 @login_required
@@ -34,7 +61,7 @@ def profile(request):
         "profile_form": profile_form,
         "success": success,
     }
-    return render(request, "account/settings/profile.html", context)
+    return render(request, "user_app/settings/profile.html", context)
 
 
 @login_required
@@ -55,7 +82,7 @@ def user(request):
         "user_form": user_form,
         "success": success,
     }
-    return render(request, "account/settings/user.html", context)
+    return render(request, "user_app/settings/user.html", context)
 
 
 @login_required
@@ -72,7 +99,7 @@ def password(request):
             password_form.save()
             auth.update_session_auth_hash(request, password_form.user)
             return HttpResponseRedirect(
-                reverse("account:password") + "?success=1"
+                reverse("user_app:password") + "?success=1"
             )
     else:
         password_form = form(request.user)
@@ -81,7 +108,7 @@ def password(request):
         "password_form": password_form,
         "success": True if "success" in request.GET else None,
     }
-    return render(request, "account/settings/password.html", context)
+    return render(request, "user_app/settings/password.html", context)
 
 
 @login_required
@@ -89,33 +116,6 @@ def connections(request):
     """Connections view."""
     user = request.user
     can_disconnect = (user.social_auth.count() > 1 or user.has_usable_password())
-
-    providers = [
-        {
-            "provider": "google-oauth2",
-            "name": "Google",
-            "link": None,
-            "username": None,
-        },
-        {
-            "provider": "github",
-            "name": "Github",
-            "link": "https://github.com/{{ data.login }}",
-            "username": "{{ data.login }}",
-        },
-        {
-            "provider": "twitter",
-            "name": "Twitter",
-            "link": "https://twitter.com/{{ data.access_token.screen_name }}/",
-            "username": "@{{ data.access_token.screen_name }}",
-        },
-        {
-            "provider": "facebook",
-            "name": "Facebook",
-            "link": None,
-            "username": None,
-        },
-    ]
 
     services = []
 
@@ -152,7 +152,7 @@ def connections(request):
         "services": services,
         "can_disconnect": can_disconnect
     }
-    return render(request, "account/settings/connections.html", context)
+    return render(request, "user_app/settings/connections.html", context)
 
 
 def register(request):
@@ -170,11 +170,11 @@ def register(request):
     context = {
         "register_form": form,
     }
-    return render(request, "account/register.html", context)
+    return render(request, "user_app/register.html", context)
 
 
 @login_required
 def delete(request):
-    """Delete user account."""
+    """Delete user user_app."""
     request.user.delete()
     return HttpResponseRedirect("/")

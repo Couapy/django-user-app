@@ -18,7 +18,7 @@
 </div>
 {% endif %}
 <div class="row">
-    {% include 'account/nav.html' %}
+    {% include 'user_app/nav.html' %}
     <div class="col">
         <h2>Connections à des comptes tiers</h2>
 
@@ -32,18 +32,18 @@
             <p>Connecté avec {{ provider.name }}.</p>
             {% endif %}
             {% if can_disconnect %}
-            <form method="post" action="{% url 'social:disconnect' provider.provider %}?next={% url 'account:connections' %}">
+            <form method="post" action="{% url 'social:disconnect' provider.provider %}?next={% url 'user_app:connections' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-secondary">Ne plus lier le compte avec {{ provider.name }}</button>
             </form>
             {% else %}
             <button type="button" class="btn btn-sm btn-secondary" disabled>Ne plus lier le compte avec {{ provider.name }}</button>
             <div class="alert alert-danger mt-3" role="alert">
-                Vous devez <a href="{% url 'account:password' %}">changer de mot de passe</a> avant de vous déconnecter de {{ provider.name }}
+                Vous devez <a href="{% url 'user_app:password' %}">changer de mot de passe</a> avant de vous déconnecter de {{ provider.name }}
             </div>
             {% endif %}
             {% else %}
-            <a href="{% url 'social:begin' provider.provider %}?next={% url 'account:connections' %}">Lier le compte avec {{ provider.name }}</a>
+            <a href="{% url 'social:begin' provider.provider %}?next={% url 'user_app:connections' %}">Lier le compte avec {{ provider.name }}</a>
             {% endif %}
         </div>
         {% endfor %}
