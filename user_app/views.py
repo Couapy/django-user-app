@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import (AdminPasswordChangeForm,
@@ -7,33 +8,6 @@ from django.template import Context, Template
 from social_django.models import UserSocialAuth
 
 from .forms import ProfileForm, UserForm
-
-providers = [
-    {
-        "provider": "google-oauth2",
-        "name": "Google",
-        "link": None,
-        "username": None,
-    },
-    {
-        "provider": "github",
-        "name": "Github",
-        "link": "https://github.com/{{ data.login }}",
-        "username": "{{ data.login }}",
-    },
-    {
-        "provider": "twitter",
-        "name": "Twitter",
-        "link": "https://twitter.com/{{ data.access_token.screen_name }}/",
-        "username": "@{{ data.access_token.screen_name }}",
-    },
-    {
-        "provider": "facebook",
-        "name": "Facebook",
-        "link": None,
-        "username": None,
-    },
-]
 
 
 def index(request):
@@ -119,7 +93,7 @@ def connections(request):
 
     services = []
 
-    for provider in providers:
+    for provider in settings.USER_APP_PROVIDERS:
         try:
             login = user.social_auth.get(provider=provider["provider"])
         except UserSocialAuth.DoesNotExist:

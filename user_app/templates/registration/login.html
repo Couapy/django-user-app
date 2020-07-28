@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Connexion{% endblock title %}
+
+{% block content %}
+<h1>Connexion</h1>
+<h2>Se connecter avec un compte utilisateur</h2>
+<div class="mb-3">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="Enregistrer" class="btn btn-primary">
+        <input type="reset" value="Annuler" class="btn btn-secondary">
+    </form>
+    <div class="mt-3">
+        <a href="{% url 'user_app:register' %}">Créer un compte</a> - <a href="{% url 'password_reset' %}">Mot de passe oublié</a>
+    </div>
+</div>
+<h2>Se connecter avec un service tiers</h2>
+<div class="mb-3">
+    {% for provider in USER_APP_PROVIDERS %}
+    <a href="{% url 'social:begin' provider.provider %}">Connectez-vous avec {{ provider.name }}</a><br>
+    {% endfor %}
+</div>
+{% endblock content %}

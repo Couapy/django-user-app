@@ -8,7 +8,7 @@ with open("requirements.txt") as fr:
 
 setuptools.setup(
     name="django-user-app",
-    version="0.0.5",
+    version="0.0.6",
     license="MIT",
 
     author="Couapy",

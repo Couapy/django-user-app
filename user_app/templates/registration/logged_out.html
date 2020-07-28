@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Déconnecté{% endblock title %}
+
+{% block content %}
+<h1>Vous avez été déconnecté</h1>
+<p>
+    Merci du temps que vous avez accordé à ce site. A bientôt !
+</p>
+<p>
+    Vous pouvez aussi vous <a href="{% url 'login' %}">reconnecter ici</a>.
+    Ou simplement <a href="/">rester sur le site</a>.
+</p>
+{% endblock content %}

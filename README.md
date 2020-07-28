@@ -24,13 +24,53 @@ Install the app in settings.py :
 ```python
 INSTALLED_APPS = [
     [...]
+    'social_django',
+    'crispy_forms',
     'user_app',
 ]
 ```
 
-Then add the settings for `social-auth-app-django` package, for example :
+Specify static files and media files in settings :
 
 ```python
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'var/static/')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'var/media/')
+```
+
+Then add the settings for `social-auth-app-django` and 'django-crispy-froms' packages, for example :
+
+```python
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+USER_APP_PROVIDERS = [
+    {
+        "provider": "google-oauth2",
+        "name": "Google",
+        "link": None,
+        "username": None,
+    },
+    {
+        "provider": "github",
+        "name": "Github",
+        "link": "https://github.com/{{ data.login }}",
+        "username": "{{ data.login }}",
+    },
+    {
+        "provider": "twitter",
+        "name": "Twitter",
+        "link": "https://twitter.com/{{ data.access_token.screen_name }}/",
+        "username": "@{{ data.access_token.screen_name }}",
+    },
+    {
+        "provider": "facebook",
+        "name": "Facebook",
+        "link": None,
+        "username": None,
+    },
+]
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.google.GoogleOAuth2',
@@ -50,7 +90,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = ""
 
 LOGIN_REDIRECT_URL = "/accounts/profile/"
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-AUTH_PROFILE_MODULE = 'accounts.Profile'
+AUTH_PROFILE_MODULE = 'user_app.Profile'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -69,56 +109,32 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/profile/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
 ```
 
-And finally use the `base.html` template like :
+Then add the urls to the urlpattern of the project :
 
-```html
-<!doctype html>
-<html lang="fr">
+```python
+from django.conf import settings
+from django.conf.urls.static import static
+#from django.contrib import admin
+from django.urls import path, include
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}{% endblock title %}</title>
-    {% block head %}{% endblock head %}
+urlpatterns = [
+    #path('admin/', admin.site.urls),
+    path('accounts/', include('user_app.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', include("social_django.urls", namespace="social")),
+] + static(
+    settings.STATIC_URL,
+    document_root=settings.STATIC_ROOT
+) + static(
+    settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT
+)
+```
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
-</head>
+And finally add the context_processor :
 
-<body>
-    {% include 'nav.html' %}
-    <div class="container pt-4 pd-4">
-        {% if success is True %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Les modifications ont bien été enregistrées.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% elif success is False %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Une erreur est survenue, les modifications n'ont pas été enregistrées.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endif %}
-        {% block content %}{% endblock content %}
-    </div>
-</body>
-
-</html>
+```python
+user_app.context_processors.providers_settings
 ```
 
 Then you have to migrate the database with `python3 manage.py migrate`
